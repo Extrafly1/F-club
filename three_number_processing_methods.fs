@@ -33,8 +33,30 @@ let countOddDigitsOver3 n =
                 | _, _ -> 0)
     loop (abs n) 0
 
+// Метод 3: Произведение делителей с суммой цифр < исходной
+let productSpecialDivisors n =
+    let rec sumDigits x acc =
+        match x with
+        | 0 -> acc
+        | _ -> sumDigits (x / 10) (acc + abs(x) % 10)
+    
+    let target = sumDigits (abs n) 0
+    
+    let rec checkDivisor d acc =
+        match d with
+        | d when d > abs n -> acc
+        | d when n % d = 0 ->
+            let divSum = sumDigits d 0
+            checkDivisor (d + 1) (acc * match divSum < target with | true -> d | false -> 1)
+        | _ -> checkDivisor (d + 1) acc
+    
+    match n with
+    | 0 -> 0
+    | _ -> checkDivisor 1 1
+
 [<EntryPoint>]
 let main argv =
     printfn "Метод 1: %i (28 -> 2+7=9)" (sumPrimeDivisors 28)
-    printfn "Метод 2: %i (496837 -> 9,7 → 2)" (countOddDigitsOver3 496837)
+    printfn "Метод 2: %i (496837 -> 9,7 → 2)" (countOddDigitsOver3 496837) 
+    printfn "Метод 3: %i (20 -> 1*10=10)" (productSpecialDivisors 20) 
     0
